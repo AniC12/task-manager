@@ -1,39 +1,52 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 type Task = { id: string; title: string; notes: string; completed: boolean };
 
-function saveTask(task: Task) {
-  const existing: Task[] = JSON.parse(localStorage.getItem('tasks') || '[]');
-  localStorage.setItem('tasks', JSON.stringify([...existing, task]));
-}
-
-export default function NewTaskPage() {
+export default function EditTaskPage({
+  params: { id },
+}: {
+  params: { id: string };
+}) {
+  const router = useRouter();
+  const [task, setTask] = useState<Task | null>(null);
   const [title, setTitle] = useState('');
   const [notes, setNotes] = useState('');
-  const router = useRouter();
+
+  // load the task once
+  useEffect(() => {
+    const stored: Task[] = JSON.parse(localStorage.getItem('tasks') || '[]');
+    const found = stored.find(t => t.id === id);
+    if (!found) {
+      router.push('/tasks'); // invalid id → go back
+      return;
+    }
+    setTask(found);
+    setTitle(found.title);
+    setNotes(found.notes);
+  }, [id, router]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!title.trim()) return;
+    if (!task) return;
 
-    saveTask({
-      id: crypto.randomUUID(),
-      title,
-      notes,
-      completed: false,        // ← **THIS MUST BE PRESENT**
-    });
+    const updatedTask = { ...task, title, notes };
+    const all: Task[] = JSON.parse(localStorage.getItem('tasks') || '[]');
+    const merged = all.map(t => (t.id === id ? updatedTask : t));
+    localStorage.setItem('tasks', JSON.stringify(merged));
 
     router.push('/tasks');
-    router.refresh();           // re-mount /tasks so it re-reads localStorage
+    router.refresh(); // re-render list page
   }
+
+  if (!task) return null; // simple loading state
 
   return (
     <main className="max-w-lg mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-6">Create a New Task</h1>
+      <h1 className="text-3xl font-bold mb-6">Edit Task</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -42,12 +55,11 @@ export default function NewTaskPage() {
             value={title}
             onChange={e => setTitle(e.target.value)}
             className="mt-1 w-full rounded border px-3 py-2"
-            placeholder="Buy groceries"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium">Notes (optional)</label>
+          <label className="block text-sm font-medium">Notes</label>
           <textarea
             value={notes}
             onChange={e => setNotes(e.target.value)}
@@ -59,7 +71,7 @@ export default function NewTaskPage() {
           type="submit"
           className="bg-blue-600 text-white rounded px-4 py-2 hover:bg-blue-700"
         >
-          Save Task
+          Save Changes
         </button>
       </form>
 

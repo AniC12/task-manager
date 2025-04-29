@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Card from '@/app/components/Card';
 
 type Task = { id: string; title: string; notes: string; completed: boolean };
 
@@ -33,39 +34,41 @@ export default function NewTaskPage() {
 
   return (
     <main className="max-w-lg mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-6">Create a New Task</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium">Title</label>
-          <input
-            value={title}
-            onChange={e => setTitle(e.target.value)}
-            className="mt-1 w-full rounded border px-3 py-2"
-            placeholder="Buy groceries"
-          />
-        </div>
+      <Card>
+        <h1 className="text-3xl font-bold mb-6">Create a New Task</h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium">Title</label>
+            <input
+              value={title}
+              onChange={e => setTitle(e.target.value)}
+              className="mt-1 w-full rounded border px-3 py-2"
+              placeholder="Buy groceries"
+            />
+          </div>
 
-        <div>
-          <label className="block text-sm font-medium">Notes (optional)</label>
-          <textarea
-            value={notes}
-            onChange={e => setNotes(e.target.value)}
-            className="mt-1 w-full rounded border px-3 py-2 h-24"
-          />
-        </div>
+          <div>
+            <label className="block text-sm font-medium">Notes (optional)</label>
+            <textarea
+              value={notes}
+              onChange={e => setNotes(e.target.value)}
+              className="mt-1 w-full rounded border px-3 py-2 h-24"
+            />
+          </div>
 
-        <button
-          type="submit"
-          className="bg-blue-600 text-white rounded px-4 py-2 hover:bg-blue-700"
-        >
-          Save Task
-        </button>
-      </form>
+          <button
+            type="submit"
+            className="bg-blue-600 text-white rounded px-4 py-2 hover:bg-blue-700"
+          >
+            Save Task
+          </button>
+        </form>
 
-      <Link href="/tasks" className="block mt-6 text-blue-600 hover:underline">
-        ← Back to tasks
-      </Link>
+        <Link href="/tasks" className="block mt-6 text-blue-600 hover:underline">
+          ← Back to tasks
+        </Link>
+      </Card>
     </main>
   );
 }

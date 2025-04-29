@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Card from '../components/Card';
 
 type Task = { id: string; title: string; notes: string; completed: boolean };
 
@@ -30,7 +31,7 @@ export default function TasksPage() {
 
 
   return (
-    <main className="p-8">
+    <Card>
       <h1 className="text-3xl font-bold mb-6">Tasks List</h1>
 
       {tasks.length === 0 ? (
@@ -40,7 +41,8 @@ export default function TasksPage() {
           {tasks.map(t => (
             <li
               key={t.id}
-              className="flex items-start gap-3 rounded border p-4 shadow-sm bg-white"
+              className="flex items-start gap-3 rounded border p-4 shadow-sm
+           bg-gray-50 dark:bg-gray-700 dark:border-gray-600"
             >
               <input
                 type="checkbox"
@@ -48,12 +50,14 @@ export default function TasksPage() {
                 onChange={() => toggleDone(t.id)}
                 className="mt-1 accent-blue-600"
               />
-              <div className={t.completed ? 'line-through text-gray-500' : ''}>
+              <div className={t.completed
+                ? 'line-through text-gray-500 dark:text-gray-400'
+                : ''}>
                 <h2 className="font-semibold">{t.title}</h2>
                 {t.notes && <p className="text-sm">{t.notes}</p>}
               </div>
 
-              <Link 
+              <Link
                 href={`/tasks/${t.id}/edit`}
                 aria-label='Edit task'
                 className='text-blue-500 hover:text-blue-700'
@@ -75,6 +79,6 @@ export default function TasksPage() {
       <Link href="/tasks/new" className="text-blue-600 hover:underline">
         Add New Task
       </Link>
-    </main>
+    </Card>
   );
 }
